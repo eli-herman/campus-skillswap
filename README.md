@@ -90,6 +90,5 @@ The site runs on PythonAnywhere's free tier with SQLite.
   ~/campus-skillswap/scripts/deploy.sh
   ```
 
-  It backs up the database, pulls the code, installs requirements, runs migrations, collects static files and reloads the site. `db.sqlite3` is git-ignored, so a deploy never overwrites live data.
-- **Backups:** `scripts/backup_db.sh` copies the live database to `~/backups` (keeping the newest 7). `deploy.sh` runs it before every deploy; run it by hand any other time. Scheduled tasks aren't available on PythonAnywhere's free tier, so there's no daily automatic backup.
+  It pulls the code, installs requirements, runs migrations, collects static files and reloads the site. `db.sqlite3` is git-ignored, so a deploy never overwrites live data.
 - **Errors:** 500 tracebacks go to the web app's error log on the PythonAnywhere **Web** tab.
