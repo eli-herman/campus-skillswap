@@ -64,7 +64,7 @@
             <p class="eyebrow">Available now</p>
             <h2>{% if search or category %}Search results{% else %}Skills for campus life{% endif %}</h2>
         </div>
-        <span class="result-count">{{ skills|length }} skill{% if skills|length != 1 %}s{% endif %}</span>
+        <span class="result-count">{{ page_obj.paginator.count }} skill{{ page_obj.paginator.count|pluralize }}</span>
     </div>
 
     {% if skills %}

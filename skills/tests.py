@@ -108,6 +108,14 @@ class SkillListFilterTests(BaseCase):
         self.assertContains(response, 'Guitar Lessons')
         self.assertNotContains(response, 'Essay Review')
 
+    def test_result_count_is_total_not_page_size(self):
+        for number in range(11):  # 12 skills total, 9 per page
+            Skill.objects.create(
+                owner=self.owner, title=f'Extra {number}', category='Other', description='x', price='1.00'
+            )
+        response = self.client.get(reverse('skill_list'), {'page': 2})
+        self.assertContains(response, '12 skills')
+
     def test_inactive_skills_hidden_from_list(self):
         self.skill.is_active = False
         self.skill.save()

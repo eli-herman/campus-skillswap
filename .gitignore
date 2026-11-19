@@ -17,3 +17,4 @@ staticfiles/
 
 # Local tooling logs (Claude Code hooks)
 patterns/
+.playwright-mcp/
