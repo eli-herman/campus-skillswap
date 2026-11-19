@@ -11,6 +11,12 @@ set -euo pipefail
     WSGI_FILE="/var/www/${USER}_pythonanywhere_com_wsgi.py"
 
     cd "$APP_DIR"
+
+    # Keep one backup of the live database, replaced on every deploy.
+    # SQLite's backup API makes a safe copy even while the site is running.
+    "$VENV/bin/python" -c "import sqlite3; sqlite3.connect('db.sqlite3').backup(sqlite3.connect('$HOME/db-backup.sqlite3'))"
+    echo "Backed up database to ~/db-backup.sqlite3"
+
     git pull --ff-only
     "$VENV/bin/pip" install -q -r requirements.txt
     "$VENV/bin/python" manage.py migrate --noinput
