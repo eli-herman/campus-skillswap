@@ -1,0 +1,38 @@
+{% extends 'skills/base.html' %}
+
+{% block title %}{{ profile_user.username }} | Campus SkillSwap{% endblock %}
+
+{% block content %}
+<section class="container section-block profile-layout">
+    <aside class="profile-card">
+        <span class="profile-avatar">{{ profile_user.username|first|upper }}</span>
+        <h1>{{ profile_user.username }}</h1>
+        {% if profile.major %}<p class="profile-major">{{ profile.major }}{% if profile.graduation_year %} · Class of {{ profile.graduation_year }}{% endif %}</p>{% endif %}
+        {% if profile.campus_email_verified %}<span class="verified-badge">Campus email verified</span>{% endif %}
+        {% if profile.bio %}<p>{{ profile.bio|linebreaksbr }}</p>{% endif %}
+        {% if user == profile_user %}
+            <form method="post" class="app-form profile-form">
+                {% csrf_token %}
+                {{ profile_form.as_p }}
+                <button class="btn btn-primary" type="submit">Save profile</button>
+            </form>
+        {% else %}
+            <a class="btn btn-primary w-100" href="{% url 'message_create' profile_user.username %}">Message {{ profile_user.username }}</a>
+        {% endif %}
+    </aside>
+    <div>
+        <p class="eyebrow">Offered skills</p>
+        <h2>{{ profile_user.username }}'s listings</h2>
+        <div class="profile-skills">
+            {% for skill in skills %}
+                <article class="favorite-row">
+                    <div><strong><a href="{% url 'skill_detail' skill.pk %}">{{ skill.title }}</a></strong><br><small>{{ skill.category }}</small></div>
+                    <span>${{ skill.price }}</span>
+                </article>
+            {% empty %}
+                <p class="muted">No active listings yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

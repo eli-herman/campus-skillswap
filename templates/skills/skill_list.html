@@ -1,0 +1,114 @@
+{% extends 'skills/base.html' %}
+
+{% block title %}Browse Skills | Campus SkillSwap{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-copy">
+            <p class="eyebrow">The campus exchange</p>
+            <h1>Find the help you need.<br>Share what you know.</h1>
+            <p class="hero-lead">Lessons, repairs, creative help, and everything in between—offered by students nearby.</p>
+        </div>
+
+        <form method="get" class="search-panel" action="{% url 'skill_list' %}">
+            <label class="visually-hidden" for="searchInput">Search skills</label>
+            <input id="searchInput" class="form-control search-input" type="search" name="q" value="{{ search }}" placeholder="Search by skill title or category">
+            <label class="visually-hidden" for="categorySelect">Category</label>
+            <select id="categorySelect" class="form-select category-select" name="category">
+                <option value="">All categories</option>
+                {% for value, label in categories %}
+                    <option value="{{ value }}" {% if category == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-gold search-button" type="submit">Search</button>
+        </form>
+        <div class="filter-dropdown dropdown">
+            <button class="btn filter-toggle dropdown-toggle{% if min_price or max_price or sort != 'newest' %} filter-toggle-active{% endif %}" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                Filters
+                {% if min_price or max_price or sort != 'newest' %}<span class="filter-badge" aria-label="Filters applied">1+</span>{% endif %}
+            </button>
+            <form method="get" class="dropdown-menu filter-menu" action="{% url 'skill_list' %}">
+                {% if search %}<input type="hidden" name="q" value="{{ search }}">{% endif %}
+                {% if category %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+                <div class="filter-menu-heading">
+                    <strong>Refine skills</strong>
+                    <a href="{% url 'skill_list' %}?q={{ search }}&category={{ category }}">Clear</a>
+                </div>
+                <div class="filter-field">
+                    <label for="minPrice">Minimum price</label>
+                    <input id="minPrice" class="form-control" type="number" min="0" step="0.01" name="min_price" value="{{ min_price }}" placeholder="$0">
+                </div>
+                <div class="filter-field">
+                    <label for="maxPrice">Maximum price</label>
+                    <input id="maxPrice" class="form-control" type="number" min="0" step="0.01" name="max_price" value="{{ max_price }}" placeholder="No limit">
+                </div>
+                <div class="filter-field">
+                    <label for="sortSelect">Sort by</label>
+                    <select id="sortSelect" class="form-select" name="sort">
+                        <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option>
+                        <option value="rating" {% if sort == 'rating' %}selected{% endif %}>Highest rated</option>
+                        <option value="price_low" {% if sort == 'price_low' %}selected{% endif %}>Lowest price</option>
+                        <option value="price_high" {% if sort == 'price_high' %}selected{% endif %}>Highest price</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary w-100" type="submit">Apply filters</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<section class="container section-block">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Available now</p>
+            <h2>{% if search or category %}Search results{% else %}Skills for campus life{% endif %}</h2>
+        </div>
+        <span class="result-count">{{ skills|length }} skill{% if skills|length != 1 %}s{% endif %}</span>
+    </div>
+
+    {% if skills %}
+        <div class="skill-grid">
+            {% for skill in skills %}
+                <article class="skill-card">
+                    <div class="skill-card-top">
+                        <span class="category-pill">{{ skill.category }}</span>
+                        {% if skill.average_rating %}
+                            <span class="rating" aria-label="{{ skill.average_rating|floatformat:1 }} out of 5 stars">★ {{ skill.average_rating|floatformat:1 }}</span>
+                        {% endif %}
+                    </div>
+                    <h3><a href="{% url 'skill_detail' skill.pk %}">{{ skill.title }}</a></h3>
+                    <p>{{ skill.description|truncatewords:18 }}</p>
+                    <div class="skill-card-bottom">
+                        <span class="price">${{ skill.price }}</span>
+                        <a class="text-link" href="{% url 'skill_detail' skill.pk %}">View skill <span aria-hidden="true">→</span></a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+        {% if page_obj.has_other_pages %}
+            <nav class="pagination-wrap" aria-label="Skill pages">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ search }}&category={{ category }}&min_price={{ min_price }}&max_price={{ max_price }}&sort={{ sort }}">Previous</a></li>
+                    {% endif %}
+                    <li class="page-item active"><span class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ search }}&category={{ category }}&min_price={{ min_price }}&max_price={{ max_price }}&sort={{ sort }}">Next</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <h3>No skills found</h3>
+            <p>Try another title or category, or be the first to post this skill.</p>
+            {% if user.is_authenticated %}
+                <a class="btn btn-primary" href="{% url 'skill_create' %}">Post a skill</a>
+            {% else %}
+                <a class="btn btn-primary" href="{% url 'register' %}">Join the swap</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

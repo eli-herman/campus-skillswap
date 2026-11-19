@@ -1,0 +1,30 @@
+{% extends 'skills/base.html' %}
+
+{% block title %}{{ action }} Skill | Campus SkillSwap{% endblock %}
+
+{% block content %}
+<section class="container narrow-section">
+    <p class="eyebrow">{{ action }} a listing</p>
+    <h1>{% if action == 'Create' %}What can you share?{% else %}Update your skill{% endif %}</h1>
+    <form method="post" class="app-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary" type="submit">{{ action }} skill</button>
+            {% if skill %}
+                <a class="btn btn-outline-secondary" href="{% url 'skill_detail' skill.pk %}">Cancel</a>
+            {% else %}
+                <a class="btn btn-outline-secondary" href="{% url 'dashboard' %}">Cancel</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+{% endblock %}

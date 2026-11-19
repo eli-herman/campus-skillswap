@@ -1,0 +1,34 @@
+{% extends 'skills/base.html' %}
+
+{% block title %}Inbox | Campus SkillSwap{% endblock %}
+
+{% block content %}
+<section class="container section-block">
+    <p class="eyebrow">Messages</p>
+    <h1>Inbox</h1>
+    <div class="inbox-layout">
+        <section>
+            <h2>Received</h2>
+            {% for message in messages_received %}
+                <article class="message-row">
+                    <strong>{{ message.sender.username }}</strong>
+                    {% if message.skill %}<small>About {{ message.skill.title }}</small>{% endif %}
+                    <p>{{ message.body|truncatewords:30 }}</p>
+                    <small>{{ message.created_at|date:"M j, g:i A" }}</small>
+                </article>
+            {% empty %}<p class="muted">No received messages.</p>{% endfor %}
+        </section>
+        <section>
+            <h2>Sent</h2>
+            {% for message in messages_sent %}
+                <article class="message-row">
+                    <strong>To {{ message.recipient.username }}</strong>
+                    {% if message.skill %}<small>About {{ message.skill.title }}</small>{% endif %}
+                    <p>{{ message.body|truncatewords:30 }}</p>
+                    <small>{{ message.created_at|date:"M j, g:i A" }}</small>
+                </article>
+            {% empty %}<p class="muted">No sent messages.</p>{% endfor %}
+        </section>
+    </div>
+</section>
+{% endblock %}

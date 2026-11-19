@@ -1,0 +1,17 @@
+{% extends 'skills/base.html' %}
+
+{% block title %}Delete Review | Campus SkillSwap{% endblock %}
+
+{% block content %}
+<section class="container narrow-section">
+    <div class="confirm-box">
+        <p class="eyebrow">Delete review</p>
+        <h1>Remove your review?</h1>
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn btn-danger" type="submit">Delete review</button>
+            <a class="btn btn-outline-secondary" href="{% url 'skill_detail' review.skill.pk %}">Cancel</a>
+        </form>
+    </div>
+</section>
+{% endblock %}

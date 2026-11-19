@@ -1,0 +1,17 @@
+{% extends 'skills/base.html' %}
+
+{% block title %}Report {{ skill.title }} | Campus SkillSwap{% endblock %}
+
+{% block content %}
+<section class="container narrow-section">
+    <p class="eyebrow">Community safety</p>
+    <h1>Report this listing</h1>
+    <p>{{ skill.title }}</p>
+    <form method="post" class="app-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-danger" type="submit">Submit report</button>
+        <a class="btn btn-outline-secondary" href="{% url 'skill_detail' skill.pk %}">Cancel</a>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+
+# Secrets and local files
+.env
+*.zip
+.DS_Store
+.ruff_cache/
+
+# Local tooling logs (Claude Code hooks)
+patterns/

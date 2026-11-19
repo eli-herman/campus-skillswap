@@ -1,0 +1,77 @@
+{% extends 'skills/base.html' %}
+
+{% block title %}My Dashboard | Campus SkillSwap{% endblock %}
+
+{% block content %}
+<section class="container section-block">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Your activity</p>
+            <h1>My skill posts</h1>
+        </div>
+        <a class="btn btn-primary" href="{% url 'skill_create' %}">Post a skill</a>
+    </div>
+
+    {% if skills %}
+        <div class="dashboard-list">
+            {% for skill in skills %}
+                <article class="dashboard-row">
+                    <div>
+                        <span class="category-pill">{{ skill.category }}</span>
+                        <h2><a href="{% url 'skill_detail' skill.pk %}">{{ skill.title }}</a></h2>
+                        <p>${{ skill.price }} · {{ skill.reviews.count }} review{% if skill.reviews.count != 1 %}s{% endif %}</p>
+                    </div>
+                    <div class="row-actions">
+                        <a class="btn btn-outline-primary" href="{% url 'skill_edit' skill.pk %}">Edit</a>
+                        <a class="btn btn-outline-danger" href="{% url 'skill_delete' skill.pk %}">Delete</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h2>Nothing posted yet</h2>
+            <p>Turn something you know into help another student can use.</p>
+            <a class="btn btn-primary" href="{% url 'skill_create' %}">Create your first post</a>
+        </div>
+    {% endif %}
+    <div class="dashboard-extras">
+        <section>
+            <p class="eyebrow">Requests sent</p>
+            {% for booking in sent_requests %}
+                <article class="request-row">
+                    <strong>{{ booking.skill.title }}</strong>
+                    <span class="status status-{{ booking.status }}">{{ booking.status|title }}</span>
+                </article>
+            {% empty %}<p class="muted">No booking requests yet.</p>{% endfor %}
+        </section>
+        <section>
+            <p class="eyebrow">Requests received</p>
+            {% for booking in received_requests %}
+                <article class="request-row">
+                    <div><strong>{{ booking.skill.title }}</strong><br><small>{{ booking.requester.username }} · {{ booking.requested_time }}</small></div>
+                    {% if booking.status != 'completed' and booking.status != 'cancelled' %}
+                        <form method="post" action="{% url 'booking_update' booking.pk %}">
+                            {% csrf_token %}
+                            {% if booking.status == 'requested' %}
+                                <button class="btn btn-sm btn-primary" name="status" value="accepted">Accept</button>
+                            {% elif booking.status == 'accepted' %}
+                                <button class="btn btn-sm btn-primary" name="status" value="completed">Complete</button>
+                            {% endif %}
+                            <button class="btn btn-sm btn-outline-danger" name="status" value="cancelled">Cancel</button>
+                        </form>
+                    {% else %}
+                        <span class="status status-{{ booking.status }}">{{ booking.status|title }}</span>
+                    {% endif %}
+                </article>
+            {% empty %}<p class="muted">No requests received yet.</p>{% endfor %}
+        </section>
+        <section>
+            <p class="eyebrow">Saved skills</p>
+            {% for skill in favorites %}
+                <a class="favorite-row" href="{% url 'skill_detail' skill.pk %}">{{ skill.title }} <span>${{ skill.price }}</span></a>
+            {% empty %}<p class="muted">No saved skills yet.</p>{% endfor %}
+        </section>
+    </div>
+</section>
+{% endblock %}

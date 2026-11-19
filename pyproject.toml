@@ -1,0 +1,10 @@
+[tool.ruff]
+line-length = 120
+extend-exclude = ["skills/migrations"]
+
+[tool.ruff.lint]
+# pycodestyle errors/warnings, pyflakes, import sorting, bugbear, Django-specific checks
+select = ["E", "W", "F", "I", "B", "DJ"]
+
+[tool.ruff.format]
+quote-style = "single"
